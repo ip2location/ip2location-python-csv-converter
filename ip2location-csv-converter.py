@@ -73,10 +73,18 @@ if (len(sys.argv) > 2):
                     else:
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
-                    new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    # new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    if remaining_columns is '':
+                        new_row = '"' + from_ip + '","' + to_ip + '"'
+                    else:
+                        new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
                     # print (new_row)
                 elif (write_mode == 'append'):
-                    new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    if remaining_columns is '':
+                        new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '"'
+                    else:
+                        new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
                     # print (new_row)
                 writetofile(output_file, new_row)
     elif (conversion_mode == 'cidr'):
@@ -103,10 +111,16 @@ if (len(sys.argv) > 2):
                     else:
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
-                    new_row = '"' + ar1[0] + '","' + remaining_columns
+                    if remaining_columns is '':
+                        new_row = '"' + ar1[0] + '"'
+                    else:
+                        new_row = '"' + ar1[0] + '","' + remaining_columns
                     # print (new_row)
                 elif (write_mode == 'append'):
-                    new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
+                    if remaining_columns is '':
+                        new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '"'
+                    else:
+                        new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
                     # print (new_row)
                 writetofile(output_file, new_row)
 else :
