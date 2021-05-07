@@ -1,4 +1,13 @@
 import os, sys, re, csv, socket, struct, ipaddress
+from io import open
+
+def writetofile(filename, row):
+    new_file = open(filename, 'a')
+    if sys.version < '3':
+        new_file.write(new_row.decode('utf-8') + '\n')
+    else:
+        new_file.write(new_row + '\n')
+    new_file.close()
 
 def no2ip(iplong):
     return (socket.inet_ntoa(struct.pack('!I', int(iplong))))
@@ -21,9 +30,9 @@ if (len(sys.argv) > 2):
         input_file = sys.argv[3]
         output_file = sys.argv[4]
     if ((input_file.lower().endswith('.csv')) and (output_file.lower().endswith('.csv'))):
-        print (input_file,'and',output_file,'is valid csv file.')
+        # print (input_file,'and',output_file,'is valid csv file.')
         if ((os.path.isfile(input_file))):
-            print ("File exist!")
+            # print ("File exist!")
         else:
             print ("File doesn't exist! Please check again.")
             sys.exit(1)
@@ -49,7 +58,7 @@ if (len(sys.argv) > 2):
                     continue
                 from_ip = no2ip(row[0])
                 to_ip = no2ip(row[1])
-                print (from_ip, to_ip)
+                # print (from_ip, to_ip)
                 total_row = len(row)
                 remaining_columns = ''
                 for i in range(2, total_row):
@@ -59,13 +68,11 @@ if (len(sys.argv) > 2):
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
                     new_row = '""' + from_ip + '","' + to_ip + '","' + remaining_columns
-                    print (new_row)
+                    # print (new_row)
                 elif (write_mode == 'append'):
                     new_row = '""' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
-                    print (new_row)
-                new_file = open(output_file, 'a')
-                new_file.write(new_row + '\n')
-                new_file.close()
+                    # print (new_row)
+                writetofile(output_file, new_row)
     elif (conversion_mode == 'cidr'):
         with open(input_file, 'r', encoding = 'utf-8') as f:
             mycsv = csv.reader(f)
@@ -74,7 +81,7 @@ if (len(sys.argv) > 2):
                     continue
                 from_ip = no2ip(row[0])
                 to_ip = no2ip(row[1])
-                print (from_ip, to_ip)
+                # print (from_ip, to_ip)
                 total_row = len(row)
                 startip = ipaddress.IPv4Address(from_ip)
                 endip = ipaddress.IPv4Address(to_ip)
@@ -91,13 +98,11 @@ if (len(sys.argv) > 2):
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
                     new_row = '""' + ar1[0] + '","' + remaining_columns
-                    print (new_row)
+                    # print (new_row)
                 elif (write_mode == 'append'):
                     new_row = '""' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
-                    print (new_row)
-                new_file = open(output_file, 'a')
-                new_file.write(new_row + '\n')
-                new_file.close()
+                    # print (new_row)
+                writetofile(output_file, new_row)
 else :
     print ("You must enter at least 2 parameters.")
     sys.exit(1)
