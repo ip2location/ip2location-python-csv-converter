@@ -12,6 +12,14 @@ def writetofile(filename, row):
 def no2ip(iplong):
     return (socket.inet_ntoa(struct.pack('!I', int(iplong))))
 
+def check_data_validity(file):
+    with open(file, newline = "") as csvfile:
+        try:
+            dialect = csv.Sniffer().sniff(csvfile.read(4096), delimiters = ",")
+            return True
+        except:
+            return False
+
 conversion_mode = 'range'
 write_mode = 'replace'
 
@@ -29,16 +37,14 @@ if (len(sys.argv) > 2):
         param2 = sys.argv[2]
         input_file = sys.argv[3]
         output_file = sys.argv[4]
-    if ((input_file.lower().endswith('.csv')) and (output_file.lower().endswith('.csv'))):
-        # print (input_file,'and',output_file,'is valid csv file.')
-        if ((os.path.isfile(input_file))):
-            # print ("File exist!")
-        else:
+    
+    if ((os.path.isfile(input_file)) is False):
             print ("File doesn't exist! Please check again.")
             sys.exit(1)
     else:
-        print ("Please enter valid CSV filename")
-        sys.exit(1)
+        if (check_data_validity(input_file)  is False):
+            print ("Please make sure the columns had comma as separator.")
+            sys.exit(1)
     regex1 = r"^\-(range|cidr)$"
     regex2 = r"^\-(replace|append)$"
     if (re.search(regex1, param1) != None):
@@ -49,7 +55,7 @@ if (len(sys.argv) > 2):
         conversion_mode = re.findall(regex1, param2)[0]
     elif (re.search(regex2, param2) != None):
         write_mode = re.findall(regex2, param2)[0]
-    print (conversion_mode,write_mode)
+    # print (conversion_mode,write_mode)
     if (conversion_mode == 'range'):
         with open(input_file, 'r', encoding = 'utf-8') as f:
             mycsv = csv.reader(f)
@@ -67,10 +73,10 @@ if (len(sys.argv) > 2):
                     else:
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
-                    new_row = '""' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
                     # print (new_row)
                 elif (write_mode == 'append'):
-                    new_row = '""' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
                     # print (new_row)
                 writetofile(output_file, new_row)
     elif (conversion_mode == 'cidr'):
@@ -97,10 +103,10 @@ if (len(sys.argv) > 2):
                     else:
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
-                    new_row = '""' + ar1[0] + '","' + remaining_columns
+                    new_row = '"' + ar1[0] + '","' + remaining_columns
                     # print (new_row)
                 elif (write_mode == 'append'):
-                    new_row = '""' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
+                    new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
                     # print (new_row)
                 writetofile(output_file, new_row)
 else :
