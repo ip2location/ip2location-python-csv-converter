@@ -1,5 +1,25 @@
-import os, sys, re, csv, socket, struct, ipaddress
+import os, sys, re, csv, socket, struct, ipaddress, binascii
 from io import open
+
+# if sys.version < '3':
+    # def u(x):
+        # return x.decode('utf-8')
+    # def b(x):
+        # return str(x)
+# else:
+    # def u(x):
+        # if isinstance(x, bytes):
+            # return x.decode()
+        # return x
+    # def b(x):
+        # if isinstance(x, bytes):
+            # return x
+        # return x.encode('ascii')
+
+# Windows version of Python does not provide it
+#          for compatibility with older versions of Windows.
+if not hasattr(socket, 'inet_pton'):
+    import win_inet_pton
 
 def writetofile(filename, row):
     new_file = open(filename, 'a')
@@ -10,7 +30,13 @@ def writetofile(filename, row):
     new_file.close()
 
 def no2ip(iplong):
-    return (socket.inet_ntoa(struct.pack('!I', int(iplong))))
+    if (int(iplong) > 4294967295):
+        if sys.version < '3':
+            return ipaddress.ip_address(long(iplong)).__str__()
+        else:
+            return ipaddress.ip_address(int(iplong)).__str__()
+    else:
+        return (socket.inet_ntoa(struct.pack('!I', int(iplong))))
 
 def check_data_validity(file):
     with open(file, newline = "") as csvfile:
@@ -45,7 +71,7 @@ if (len(sys.argv) > 2):
         if (check_data_validity(input_file)  is False):
             print ("Please make sure the columns had comma as separator.")
             sys.exit(1)
-    regex1 = r"^\-(range|cidr)$"
+    regex1 = r"^\-(range|cidr|hex)$"
     regex2 = r"^\-(replace|append)$"
     if (re.search(regex1, param1) != None):
         conversion_mode = re.findall(regex1, param1)[0]
@@ -123,6 +149,69 @@ if (len(sys.argv) > 2):
                         new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
                     # print (new_row)
                 writetofile(output_file, new_row)
+    elif (conversion_mode == 'hex'):
+        with open(input_file, 'r', encoding = 'utf-8') as f:
+            mycsv = csv.reader(f)
+            for row in mycsv:
+                if ((re.search(r"^[0-9]+$", row[0]) == None) or (re.search(r"^[0-9]+$", row[0]) == None)):
+                    continue
+                from_ip = no2ip(row[0])
+                to_ip = no2ip(row[1])
+                total_row = len(row)
+                if (int(row[0]) > 4294967295):
+                    # from_hex = int(binascii.hexlify(socket.inet_pton(socket.AF_INET6, from_ip)), 16).upper()
+                    from_hex = binascii.hexlify(socket.inet_pton(socket.AF_INET6, from_ip)).upper()
+                    if (len(from_hex) < 16) :
+                        from_hex = from_hex.zfill(16-from_hex.len())
+                else:
+                    # from_hex = int(binascii.hexlify(socket.inet_aton(from_ip)), 8).upper()
+                    from_hex = binascii.hexlify(socket.inet_aton(from_ip)).upper()
+                    if (len(from_hex) < 8) :
+                        from_hex = from_hex.zfill(8-from_hex.len())
+                if (int(row[1]) > 4294967295):
+                    # to_hex = int(binascii.hexlify(socket.inet_pton(socket.AF_INET6, to_ip)), 16).upper()
+                    to_hex = binascii.hexlify(socket.inet_pton(socket.AF_INET6, to_ip)).upper()
+                    if (len(to_hex) < 16) :
+                        to_hex = to_hex.zfill(16-to_hex.len())
+                else:
+                    # to_hex = int(binascii.hexlify(socket.inet_aton(to_ip)), 8).upper()
+                    to_hex = binascii.hexlify(socket.inet_aton(to_ip)).upper()
+                    if (len(to_hex) < 8) :
+                        to_hex = to_hex.zfill(8-to_hex.len())
+                remaining_columns = ''
+                for i in range(2, total_row):
+                    if (i == (total_row - 1)):
+                        remaining_columns += row[i] + '"'
+                    else:
+                        remaining_columns += row[i] + '","'
+                if (write_mode == 'replace'):
+                    # new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    if sys.version < '3':
+                        if remaining_columns is '':
+                            new_row = '"' + from_hex + '","' + to_hex + '"'
+                        else:
+                            new_row = '"' + from_hex + '","' + to_hex + '","' + remaining_columns
+                    else:
+                        if remaining_columns is '':
+                            new_row = '"' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '"'
+                        else:
+                            new_row = '"' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '","' + remaining_columns
+                    # print (new_row)
+                elif (write_mode == 'append'):
+                    # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
+                    if sys.version < '3':
+                        if remaining_columns is '':
+                            new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '"'
+                        else:
+                            new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '","' + remaining_columns
+                    else:
+                        if remaining_columns is '':
+                            new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '"'
+                        else:
+                            new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '","' + remaining_columns
+                    # print (new_row)
+                writetofile(output_file, new_row)
+
 else :
     print ("You must enter at least 2 parameters.")
     sys.exit(1)

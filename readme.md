@@ -15,6 +15,10 @@ This script require *ipaddress* to work. If you do not have the library installe
 
 `pip install ipaddress`
 
+For Windows user, please install this library *win_inet_pton* before using this script, you can install the library by running the following command:
+
+`pip install win-inet-pton`
+
 ## Usage
 
 ```
@@ -91,6 +95,29 @@ Output:
 "1.10.12.0/22","CN","China"
 "1.10.16.0/20","CN","China"
 "1.10.32.0/19","CN","China"
+```
+
+##### Convert into hexadecimal with replace option:
+
+Command:
+
+```
+python ip2location-csv-converter.py -hex -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
+```
+
+Output:
+
+```
+"01060000","0107ffff","IN","India"
+"01080000","0108ffff","CN","China"
+"01090000","0109ffff","MY","Malaysia"
+"010a0000","010a09ff","CN","China"
+"010a0a00","010a0aff","AU","Australia"
+"010a0b00","010a7fff","CN","China"
+"010a8000","010affff","TH","Thailand"
+"010b0000","010bffff","KR","Korea, Republic of"
+"010c0000","010fffff","CN","China"
+"01100000","01103fff","KR","Korea, Republic of"
 ```
 
 ##### Convert into range with append option:
