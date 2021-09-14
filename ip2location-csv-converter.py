@@ -21,13 +21,13 @@ from io import open
 if not hasattr(socket, 'inet_pton'):
     import win_inet_pton
 
-def writetofile(filename, row):
-    new_file = open(filename, 'a')
-    if sys.version < '3':
-        new_file.write(new_row.decode('utf-8') + '\n')
-    else:
-        new_file.write(new_row + '\n')
-    new_file.close()
+# def writetofile(filename, row):
+    # new_file = open(filename, 'a')
+    # if sys.version < '3':
+        # new_file.write(new_row.decode('utf-8') + '\n')
+    # else:
+        # new_file.write(new_row + '\n')
+    # new_file.close()
 
 def no2ip(iplong):
     if (int(iplong) > 4294967295):
@@ -83,6 +83,7 @@ if (len(sys.argv) > 2):
         write_mode = re.findall(regex2, param2)[0]
     # print (conversion_mode,write_mode)
     if (conversion_mode == 'range'):
+        my_list = []
         with open(input_file, 'r', encoding = 'utf-8') as f:
             mycsv = csv.reader(f)
             for row in mycsv:
@@ -112,8 +113,15 @@ if (len(sys.argv) > 2):
                     else:
                         new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
                     # print (new_row)
-                writetofile(output_file, new_row)
+                # writetofile(output_file, new_row)
+                if sys.version < '3':
+                    my_list.append(new_row.decode('utf-8'))
+                else:
+                    my_list.append(new_row)
+        with open(output_file, 'w+') as myWrite:
+            myWrite.writelines("{}\n".format(x) for x in my_list)
     elif (conversion_mode == 'cidr'):
+        my_list = []
         with open(input_file, 'r', encoding = 'utf-8') as f:
             mycsv = csv.reader(f)
             for row in mycsv:
@@ -148,8 +156,15 @@ if (len(sys.argv) > 2):
                     else:
                         new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
                     # print (new_row)
-                writetofile(output_file, new_row)
+                # writetofile(output_file, new_row)
+                if sys.version < '3':
+                    my_list.append(new_row.decode('utf-8'))
+                else:
+                    my_list.append(new_row)
+        with open(output_file, 'w+') as myWrite:
+            myWrite.writelines("{}\n".format(x) for x in my_list)
     elif (conversion_mode == 'hex'):
+        my_list = []
         with open(input_file, 'r', encoding = 'utf-8') as f:
             mycsv = csv.reader(f)
             for row in mycsv:
@@ -210,7 +225,13 @@ if (len(sys.argv) > 2):
                         else:
                             new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '","' + remaining_columns
                     # print (new_row)
-                writetofile(output_file, new_row)
+                # writetofile(output_file, new_row)
+                if sys.version < '3':
+                    my_list.append(new_row.decode('utf-8'))
+                else:
+                    my_list.append(new_row)
+        with open(output_file, 'w+') as myWrite:
+            myWrite.writelines("{}\n".format(x) for x in my_list)
 
 else :
     print ("You must enter at least 2 parameters.")
