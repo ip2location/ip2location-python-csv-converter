@@ -101,14 +101,14 @@ if (len(sys.argv) > 2):
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
                     # new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
-                    if remaining_columns is '':
+                    if remaining_columns == '':
                         new_row = '"' + from_ip + '","' + to_ip + '"'
                     else:
                         new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
                     # print (new_row)
                 elif (write_mode == 'append'):
                     # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
-                    if remaining_columns is '':
+                    if remaining_columns == '':
                         new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '"'
                     else:
                         new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
@@ -145,13 +145,13 @@ if (len(sys.argv) > 2):
                     else:
                         remaining_columns += row[i] + '","'
                 if (write_mode == 'replace'):
-                    if remaining_columns is '':
+                    if remaining_columns == '':
                         new_row = '"' + ar1[0] + '"'
                     else:
                         new_row = '"' + ar1[0] + '","' + remaining_columns
                     # print (new_row)
                 elif (write_mode == 'append'):
-                    if remaining_columns is '':
+                    if remaining_columns == '':
                         new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '"'
                     else:
                         new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
@@ -202,12 +202,12 @@ if (len(sys.argv) > 2):
                 if (write_mode == 'replace'):
                     # new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
                     if sys.version < '3':
-                        if remaining_columns is '':
+                        if remaining_columns == '':
                             new_row = '"' + from_hex + '","' + to_hex + '"'
                         else:
                             new_row = '"' + from_hex + '","' + to_hex + '","' + remaining_columns
                     else:
-                        if remaining_columns is '':
+                        if remaining_columns == '':
                             new_row = '"' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '"'
                         else:
                             new_row = '"' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '","' + remaining_columns
@@ -215,12 +215,12 @@ if (len(sys.argv) > 2):
                 elif (write_mode == 'append'):
                     # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
                     if sys.version < '3':
-                        if remaining_columns is '':
+                        if remaining_columns == '':
                             new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '"'
                         else:
                             new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '","' + remaining_columns
                     else:
-                        if remaining_columns is '':
+                        if remaining_columns == '':
                             new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '"'
                         else:
                             new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '","' + remaining_columns
