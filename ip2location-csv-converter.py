@@ -131,8 +131,8 @@ if (len(sys.argv) > 2):
                 to_ip = no2ip(row[1])
                 # print (from_ip, to_ip)
                 total_row = len(row)
-                startip = ipaddress.IPv4Address(from_ip)
-                endip = ipaddress.IPv4Address(to_ip)
+                startip = ipaddress.ip_address(from_ip)
+                endip = ipaddress.ip_address(to_ip)
                 ar = [ipaddr for ipaddr in ipaddress.summarize_address_range(startip, endip)]
                 ar1 = []
                 for i in range(len(ar)):
