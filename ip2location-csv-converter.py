@@ -131,36 +131,39 @@ if (len(sys.argv) > 2):
                 to_ip = no2ip(row[1])
                 # print (from_ip, to_ip)
                 total_row = len(row)
-                startip = ipaddress.IPv4Address(from_ip)
-                endip = ipaddress.IPv4Address(to_ip)
-                ar = [ipaddr for ipaddr in ipaddress.summarize_address_range(startip, endip)]
-                ar1 = []
-                for i in range(len(ar)):
-                    ar1.append(str(ar[i]))
-                # print (ar1)
-                remaining_columns = ''
-                for i in range(2, total_row):
-                    if (i == (total_row - 1)):
-                        remaining_columns += row[i] + '"'
+                startip = ipaddress.ip_address(from_ip)
+                endip = ipaddress.ip_address(to_ip)
+                try:
+                    ar = [ipaddr for ipaddr in ipaddress.summarize_address_range(startip, endip)]
+                    ar1 = []
+                    for i in range(len(ar)):
+                        ar1.append(str(ar[i]))
+                    # print (ar1)
+                    remaining_columns = ''
+                    for i in range(2, total_row):
+                        if (i == (total_row - 1)):
+                            remaining_columns += row[i] + '"'
+                        else:
+                            remaining_columns += row[i] + '","'
+                    if (write_mode == 'replace'):
+                        if remaining_columns == '':
+                            new_row = '"' + ar1[0] + '"'
+                        else:
+                            new_row = '"' + ar1[0] + '","' + remaining_columns
+                        # print (new_row)
+                    elif (write_mode == 'append'):
+                        if remaining_columns == '':
+                            new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '"'
+                        else:
+                            new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
+                        # print (new_row)
+                    # writetofile(output_file, new_row)
+                    if sys.version < '3':
+                        my_list.append(new_row.decode('utf-8'))
                     else:
-                        remaining_columns += row[i] + '","'
-                if (write_mode == 'replace'):
-                    if remaining_columns == '':
-                        new_row = '"' + ar1[0] + '"'
-                    else:
-                        new_row = '"' + ar1[0] + '","' + remaining_columns
-                    # print (new_row)
-                elif (write_mode == 'append'):
-                    if remaining_columns == '':
-                        new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '"'
-                    else:
-                        new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns
-                    # print (new_row)
-                # writetofile(output_file, new_row)
-                if sys.version < '3':
-                    my_list.append(new_row.decode('utf-8'))
-                else:
-                    my_list.append(new_row)
+                        my_list.append(new_row)
+                except:
+                    print ("Skipped invalid (range) data record")
         with open(output_file, 'w+') as myWrite:
             myWrite.writelines("{}\n".format(x) for x in my_list)
     elif (conversion_mode == 'hex'):
