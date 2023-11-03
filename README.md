@@ -1,6 +1,6 @@
 # IP2Location Python CSV Converter
 
-This Python script converts IP2Location CSV data file, that contains the IP address in numeric notation, into dot-decimal notation (such as x.x.x.x) or CIDR notation (x.x.x.x/24). It supports both the IP2Location commercial edition, DB1 to DB24 database and also the free edition, IP2Location LITE database. In addition to this, this converter can also be used to convert any CSV file that contains the IP number (the numeric notation).
+This Python script converts IP2Location CSV data file, that contains the IP address in numeric notation, into dot-decimal notation (such as x.x.x.x) or CIDR notation (x.x.x.x/24). It supports both the IP2Location commercial edition, DB1 to DB26 database and also the free edition, IP2Location LITE database. In addition to this, this converter can also be used to convert any CSV file that contains the IP number (the numeric notation).
 
 You can download the IP2Location CSV file at the below links:
 
@@ -19,10 +19,23 @@ For Windows user, please install this library *win_inet_pton* before using this 
 
 `pip install win-inet-pton`
 
+## Installation
+
+You can install the script by using pip command:
+
+`pip install pip install ip2location-python-csv-converter`
+
+You can also download the standalone script from the root of this repository to your local directory and run from your local directory.
+
 ## Usage
 
 ```
 python ip2location-csv-converter.py [-range | -cidr | -hex] [-replace | -append] INPUT_FILE OUTPUT_FILE
+```
+or
+
+```
+ip2location-csv-converter [-range | -cidr | -hex] [-replace | -append] INPUT_FILE OUTPUT_FILE
 ```
 
 #### Parameters
@@ -60,6 +73,12 @@ Command:
 python ip2location-csv-converter.py -range -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
+or
+
+```
+ip2location-csv-converter -range -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
+```
+
 Output:
 
 ```
@@ -81,6 +100,11 @@ Command:
 
 ```
 python ip2location-csv-converter.py -cidr -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
+```
+or
+
+```
+ip2location-csv-converter -cidr -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
 Output:
@@ -106,6 +130,12 @@ Command:
 python ip2location-csv-converter.py -hex -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
+or
+
+```
+ip2location-csv-converter -hex -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
+```
+
 Output:
 
 ```
@@ -129,6 +159,12 @@ Command:
 python ip2location-csv-converter.py -range -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
+or
+
+```
+ip2location-csv-converter -range -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
+```
+
 Output:
 
 ```
@@ -150,6 +186,12 @@ Command:
 
 ```
 python ip2location-csv-converter.py -cidr -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
+```
+
+or
+
+```
+ip2location-csv-converter -cidr -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
 Output:
@@ -180,6 +222,12 @@ Command:
 python ip2location-csv-converter.py -hex -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
+or
+
+```
+ip2location-csv-converter -hex -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
+```
+
 Output:
 
 ```
@@ -194,8 +242,6 @@ Output:
 "010c0000","010fffff","17563648","17825791","CN","China"
 "01100000","01103fff","17825792","17842175","KR","Korea, Republic of"
 ```
-
-## 
 
 ## Custom Input File
 
