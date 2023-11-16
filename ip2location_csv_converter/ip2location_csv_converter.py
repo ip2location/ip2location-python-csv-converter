@@ -115,27 +115,27 @@ def number_to_hex(row, write_mode, conversion_mode):
         # new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
         if sys.version < '3':
             if remaining_columns == '':
-                new_row = '"' + from_hex + '","' + to_hex + '"'
+                new_row = '"' + from_hex + '","' + to_hex + '"\n'
             else:
-                new_row = '"' + from_hex + '","' + to_hex + '","' + remaining_columns
+                new_row = '"' + from_hex + '","' + to_hex + '","' + remaining_columns + '\n'
         else:
             if remaining_columns == '':
-                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '"'
+                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '"\n'
             else:
-                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns
+                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns + '\n'
         # print (new_row)
     elif (write_mode == 'append'):
         # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
         if sys.version < '3':
             if remaining_columns == '':
-                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '"'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '"\n'
             else:
-                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '","' + remaining_columns
+                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '","' + remaining_columns + '\n'
         else:
             if remaining_columns == '':
-                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '"'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '"\n'
             else:
-                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns
+                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns + '\n'
     return new_row
 
 def convert_to_csv(input_file, output_file, conversion_mode, write_mode):
@@ -169,7 +169,7 @@ def convert_to_csv(input_file, output_file, conversion_mode, write_mode):
 
             if (len(my_list) > 0):
                 with open(output_file, 'a') as myWrite:
-                    myWrite.writelines("{}\n".format(x) for x in my_list)
+                    myWrite.write(''.join(my_list))
 
             my_list = []
 
