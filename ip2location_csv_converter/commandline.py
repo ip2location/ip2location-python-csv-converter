@@ -16,7 +16,13 @@ def print_usage():
 "  IP numbers will be converted into CIDR format.\n"
 "\n"
 "  -hex\n"
-"  IP numbers will be converted into hexadecimal format.\n"
+"  IP numbers will be converted into hexadecimal format. (auto padding)\n"
+"\n"
+"  -hex4\n"
+"  	IP numbers will be converted into hexadecimal format. (pad IPv4)\n"
+"\n"
+"  -hex6\n"
+"  	IP numbers will be converted into hexadecimal format. (pad IPv6)\n"
 "\n"
 "  -replace\n"
 "  The IP numbers in will be replaced to the selected format.\n"
@@ -51,7 +57,7 @@ def main():
             if (check_data_validity(input_file)  is False):
                 print ("Please make sure the columns had comma as separator.")
                 sys.exit(1)
-        regex1 = r"^\-(range|cidr|hex)$"
+        regex1 = r"^\-(range|cidr|hex|hex4|hex6)$"
         regex2 = r"^\-(replace|append)$"
         if (re.search(regex1, param1) != None):
             conversion_mode = re.findall(regex1, param1)[0]

@@ -23,16 +23,9 @@ For Windows user, please install this library *win_inet_pton* before using this 
 
 You can install the script by using pip command:
 
-`pip install pip install ip2location-python-csv-converter`
-
-You can also download the standalone script from the root of this repository to your local directory and run from your local directory.
+`pip install ip2location-python-csv-converter`
 
 ## Usage
-
-```
-python ip2location-csv-converter.py [-range | -cidr | -hex] [-replace | -append] INPUT_FILE OUTPUT_FILE
-```
-or
 
 ```
 ip2location-csv-converter [-range | -cidr | -hex] [-replace | -append] INPUT_FILE OUTPUT_FILE
@@ -44,7 +37,9 @@ ip2location-csv-converter [-range | -cidr | -hex] [-replace | -append] INPUT_FIL
 | --------- | ------------------------------------------------------------ |
 | -range    | IP numbers will be converted into the first IP address and last IP address in the range. |
 | -cidr     | IP numbers will be converted into CIDR format.               |
-| -hex      | IP numbers will be converted into hexadecimal format.        |
+| -hex      | IP numbers will be converted into hexadecimal format. (auto padding)        |
+| -hex4     | IP numbers will be converted into hexadecimal format. (pad IPv4)        |
+| -hex6     | IP numbers will be converted into hexadecimal format. (pad IPv6)        |
 | -replace  | The IP numbers in will be replaced to the selected format.   |
 | -append   | The converted format will be appended after the IP numbers field. |
 
@@ -70,12 +65,6 @@ ip2location-csv-converter [-range | -cidr | -hex] [-replace | -append] INPUT_FIL
 Command:
 
 ```
-python ip2location-csv-converter.py -range -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
-```
-
-or
-
-```
 ip2location-csv-converter -range -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
@@ -97,11 +86,6 @@ Output:
 ##### Convert into CIDR with replace option:
 
 Command:
-
-```
-python ip2location-csv-converter.py -cidr -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
-```
-or
 
 ```
 ip2location-csv-converter -cidr -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
@@ -127,12 +111,6 @@ Output:
 Command:
 
 ```
-python ip2location-csv-converter.py -hex -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
-```
-
-or
-
-```
 ip2location-csv-converter -hex -replace IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
@@ -156,12 +134,6 @@ Output:
 Command:
 
 ```
-python ip2location-csv-converter.py -range -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
-```
-
-or
-
-```
 ip2location-csv-converter -range -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
 ```
 
@@ -183,12 +155,6 @@ Output:
 ##### Convert into CIDR with append option:
 
 Command:
-
-```
-python ip2location-csv-converter.py -cidr -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
-```
-
-or
 
 ```
 ip2location-csv-converter -cidr -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
@@ -217,12 +183,6 @@ Output:
 ##### Convert into hexadecimal with append option:
 
 Command:
-
-```
-python ip2location-csv-converter.py -hex -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV
-```
-
-or
 
 ```
 ip2location-csv-converter -hex -append IP2LOCATION-DB1.CSV IP2LOCATION-DB1.NEW.CSV

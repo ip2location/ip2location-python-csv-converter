@@ -91,30 +91,20 @@ def number_to_cidr(row, write_mode):
         print ("Skipped invalid (range) data record")
     return new_row
 
-def number_to_hex(row, write_mode):
-    from_ip = no2ip(row[0])
-    to_ip = no2ip(row[1])
+def number_to_hex(row, write_mode, conversion_mode):
     total_row = len(row)
-    if (int(row[0]) > 4294967295):
-        # from_hex = int(binascii.hexlify(socket.inet_pton(socket.AF_INET6, from_ip)), 16).upper()
-        from_hex = binascii.hexlify(socket.inet_pton(socket.AF_INET6, from_ip)).upper()
-        if (len(from_hex) < 16) :
-            from_hex = from_hex.zfill(16-from_hex.len())
-    else:
-        # from_hex = int(binascii.hexlify(socket.inet_aton(from_ip)), 8).upper()
-        from_hex = binascii.hexlify(socket.inet_aton(from_ip)).upper()
-        if (len(from_hex) < 8) :
-            from_hex = from_hex.zfill(8-from_hex.len())
-    if (int(row[1]) > 4294967295):
-        # to_hex = int(binascii.hexlify(socket.inet_pton(socket.AF_INET6, to_ip)), 16).upper()
-        to_hex = binascii.hexlify(socket.inet_pton(socket.AF_INET6, to_ip)).upper()
-        if (len(to_hex) < 16) :
-            to_hex = to_hex.zfill(16-to_hex.len())
-    else:
-        # to_hex = int(binascii.hexlify(socket.inet_aton(to_ip)), 8).upper()
-        to_hex = binascii.hexlify(socket.inet_aton(to_ip)).upper()
-        if (len(to_hex) < 8) :
-            to_hex = to_hex.zfill(8-to_hex.len())
+
+    if (conversion_mode == 'hex6'):
+        from_hex = hex(int(row[0]))[2:].zfill(32)
+        to_hex = hex(int(row[1]))[2:].zfill(32)
+    elif ((conversion_mode == 'hex4') or (conversion_mode == 'hex')):
+        from_hex = hex(int(row[0]))[2:].zfill(16)
+        to_hex = hex(int(row[1]))[2:].zfill(16)
+    # else:
+    if (row[0] == 4294967295) :
+        from_hex = hex(int(row[0]))[2:].zfill(32)
+    if (row[1] == 4294967295) :
+        to_hex = hex(int(row[1]))[2:].zfill(32)
     remaining_columns = ''
     for i in range(2, total_row):
         if (i == (total_row - 1)):
@@ -130,9 +120,9 @@ def number_to_hex(row, write_mode):
                 new_row = '"' + from_hex + '","' + to_hex + '","' + remaining_columns
         else:
             if remaining_columns == '':
-                new_row = '"' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '"'
+                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '"'
             else:
-                new_row = '"' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '","' + remaining_columns
+                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns
         # print (new_row)
     elif (write_mode == 'append'):
         # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
@@ -143,9 +133,9 @@ def number_to_hex(row, write_mode):
                 new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '","' + remaining_columns
         else:
             if remaining_columns == '':
-                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '"'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '"'
             else:
-                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex.decode('utf-8')) + '","' + str(to_hex.decode('utf-8')) + '","' + remaining_columns
+                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns
     return new_row
 
 def convert_to_csv(input_file, output_file, conversion_mode, write_mode):
@@ -170,8 +160,8 @@ def convert_to_csv(input_file, output_file, conversion_mode, write_mode):
                     new_row = range_number_to_ip(row, write_mode)
                 elif (conversion_mode == 'cidr'):
                     new_row = number_to_cidr(row, write_mode)
-                elif (conversion_mode == 'hex'):
-                    new_row = number_to_hex(row, write_mode)
+                elif ((conversion_mode == 'hex') or (conversion_mode == 'hex4') or (conversion_mode == 'hex6')):
+                    new_row = number_to_hex(row, write_mode, conversion_mode)
                 if sys.version < '3':
                     my_list.append(new_row.decode('utf-8'))
                 else:
