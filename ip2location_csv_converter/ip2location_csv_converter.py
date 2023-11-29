@@ -39,16 +39,16 @@ def range_number_to_ip(row, write_mode):
     if (write_mode == 'replace'):
         # new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
         if remaining_columns == '':
-            new_row = '"' + from_ip + '","' + to_ip + '"\r\n'
+            new_row = '"' + from_ip + '","' + to_ip + "\"\n"
         else:
-            new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns + '\r\n'
+            new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns + "\n"
         # print (new_row)
     elif (write_mode == 'append'):
         # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
         if remaining_columns == '':
-            new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '"\r\n'
+            new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + "\"\n"
         else:
-            new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns + '\r\n'
+            new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns + "\n"
     return new_row
 
 def number_to_cidr(row, write_mode):
@@ -72,15 +72,15 @@ def number_to_cidr(row, write_mode):
                 remaining_columns += row[i] + '","'
         if (write_mode == 'replace'):
             if remaining_columns == '':
-                new_row = '"' + ar1[0] + '"\r\n'
+                new_row = '"' + ar1[0] + "\"\n"
             else:
-                new_row = '"' + ar1[0] + '","' + remaining_columns + '\r\n'
+                new_row = '"' + ar1[0] + '","' + remaining_columns + "\n"
             # print (new_row)
         elif (write_mode == 'append'):
             if remaining_columns == '':
-                new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '"\r\n'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + "\"\n"
             else:
-                new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns + '\r\n'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns + "\n"
             # print (new_row)
     except:
         print ("Skipped invalid (range) data record")
@@ -110,27 +110,27 @@ def number_to_hex(row, write_mode, conversion_mode):
         # new_row = '"' + from_ip + '","' + to_ip + '","' + remaining_columns
         if sys.version < '3':
             if remaining_columns == '':
-                new_row = '"' + from_hex + '","' + to_hex + '"\r\n'
+                new_row = '"' + from_hex + '","' + to_hex + '"'
             else:
-                new_row = '"' + from_hex + '","' + to_hex + '","' + remaining_columns + '\r\n'
+                new_row = '"' + from_hex + '","' + to_hex + '","' + remaining_columns + "\n"
         else:
             if remaining_columns == '':
-                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '"\r\n'
+                new_row = '"' + str(from_hex) + '","' + str(to_hex) + "\"\n"
             else:
-                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns + '\r\n'
+                new_row = '"' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns + "\n"
         # print (new_row)
     elif (write_mode == 'append'):
         # new_row = '"' + row[0] + '","' + row[1] + '","' + from_ip + '","' + to_ip + '","' + remaining_columns
         if sys.version < '3':
             if remaining_columns == '':
-                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '"\r\n'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + "\"\n"
             else:
-                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '","' + remaining_columns + '\r\n'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + from_hex + '","' + to_hex + '","' + remaining_columns + "\n"
         else:
             if remaining_columns == '':
-                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '"\r\n'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + "\"\n"
             else:
-                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns + '\r\n'
+                new_row = '"' + row[0] + '","' + row[1] + '","' + str(from_hex) + '","' + str(to_hex) + '","' + remaining_columns + "\n"
     return new_row
 
 def convert_to_csv(input_file, output_file, conversion_mode, write_mode):
@@ -160,10 +160,12 @@ def convert_to_csv(input_file, output_file, conversion_mode, write_mode):
                 if sys.version < '3':
                     my_list.append(new_row.decode('utf-8'))
                 else:
+                    # detect_eol(new_row)
+                    print(repr(new_row))
                     my_list.append(new_row)
 
             if (len(my_list) > 0):
-                with open(output_file, 'a') as myWrite:
+                with open(output_file, 'a', newline='\r\n') as myWrite:
                     myWrite.write(''.join(my_list))
 
             my_list = []
