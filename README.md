@@ -25,6 +25,13 @@ You can install the script by using pip command:
 
 `pip install ip2location-python-csv-converter`
 
+For Arch Linux user, you can also install the script by using the following commands:
+
+```bash
+git clone https://aur.archlinux.org/ip2location-python-csv-converter.git && cd ip2location-python-csv-converter
+makepkg -si
+```
+
 ## Usage
 
 ```
