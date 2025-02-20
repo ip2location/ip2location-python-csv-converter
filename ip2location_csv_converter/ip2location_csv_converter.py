@@ -70,18 +70,20 @@ def number_to_cidr(row, write_mode):
                 remaining_columns += row[i] + '"'
             else:
                 remaining_columns += row[i] + '","'
-        if (write_mode == 'replace'):
-            if remaining_columns == '':
-                new_row = '"' + ar1[0] + "\"\n"
-            else:
-                new_row = '"' + ar1[0] + '","' + remaining_columns + "\n"
-            # print (new_row)
-        elif (write_mode == 'append'):
-            if remaining_columns == '':
-                new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + "\"\n"
-            else:
-                new_row = '"' + row[0] + '","' + row[1] + '","' + ar1[0] + '","' + remaining_columns + "\n"
-            # print (new_row)
+        new_row = ''
+        for j in range(len(ar1)):
+            if (write_mode == 'replace'):
+                if remaining_columns == '':
+                    new_row += '"' + ar1[j] + "\"\n"
+                else:
+                    new_row += '"' + ar1[j] + '","' + remaining_columns + "\n"
+                # print (new_row)
+            elif (write_mode == 'append'):
+                if remaining_columns == '':
+                    new_row += '"' + row[0] + '","' + row[1] + '","' + ar1[j] + "\"\n"
+                else:
+                    new_row += '"' + row[0] + '","' + row[1] + '","' + ar1[j] + '","' + remaining_columns + "\n"
+                # print (new_row)
     except:
         print ("Skipped invalid (range) data record")
     return new_row
