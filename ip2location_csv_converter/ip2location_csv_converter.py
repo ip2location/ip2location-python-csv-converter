@@ -9,13 +9,17 @@ chunk_size = 1000
 # chunk_size = 10000
 
 def no2ip(iplong):
-    if (int(iplong) > 4294967295):
-        if sys.version < '3':
-            return ipaddress.ip_address(long(iplong)).__str__()
+    try:
+        if (int(iplong) > 4294967295):
+            if sys.version < '3':
+                return ipaddress.ip_address(long(iplong)).__str__()
+            else:
+                return ipaddress.ip_address(int(iplong)).__str__()
         else:
-            return ipaddress.ip_address(int(iplong)).__str__()
-    else:
-        return (socket.inet_ntoa(struct.pack('!I', int(iplong))))
+            return (socket.inet_ntoa(struct.pack('!I', int(iplong))))
+    except ValueError:
+        print(f'Invalid IP number value {iplong} detected. Please fix it before continue.')
+        sys.exit(1)
 
 def check_data_validity(file):
     with open(file, newline = "") as csvfile:
@@ -28,7 +32,7 @@ def check_data_validity(file):
 def range_number_to_ip(row, write_mode):
     from_ip = no2ip(row[0])
     to_ip = no2ip(row[1])
-    # print (from_ip, to_ip)
+    print (from_ip, to_ip)
     total_row = len(row)
     remaining_columns = ''
     for i in range(2, total_row):
@@ -163,7 +167,7 @@ def convert_to_csv(input_file, output_file, conversion_mode, write_mode):
                     my_list.append(new_row.decode('utf-8'))
                 else:
                     # detect_eol(new_row)
-                    print(repr(new_row))
+                    # print(repr(new_row))
                     my_list.append(new_row)
 
             if (len(my_list) > 0):
