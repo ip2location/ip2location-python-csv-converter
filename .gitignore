@@ -9,3 +9,4 @@ htmlcov/
 .tox/
 docs/_build/
 *.egg-info
+*.parquet

@@ -1,5 +1,5 @@
 import os, re, sys, time
-from ip2location_csv_converter.ip2location_csv_converter import convert_to_csv, check_data_validity
+from ip2location_csv_converter.ip2location_csv_converter import convert_to_csv, check_data_validity, csv_to_parquet
 
 regex1 = r"^\-(range|cidr|hex)$"
 regex2 = r"^\-(replace|append)$"
@@ -7,7 +7,7 @@ regex3 = r"^\-(help)$"
 
 def print_usage():
     print(
-"Usage: ip2location-csv-converter [-range | -cidr | -hex] [-replace | -append] INPUT_FILE OUTPUT_FILE\n"
+"Usage: ip2location-csv-converter [-range | -cidr | -hex | -parquet] [-replace | -append] [database_type] INPUT_FILE OUTPUT_FILE\n"
 "\n"
 "  -range\n"
 "  IP numbers will be converted into the first IP address and last IP address in the range.\n"
@@ -27,8 +27,8 @@ def print_usage():
 "  -replace\n"
 "  The IP numbers in will be replaced to the selected format.\n"
 "\n"
-"  -append\n"
-"  The converted format will be appended after the IP numbers field.\n"
+"  -parquet\n"
+"  Convert a IP2Location/IP2Proxy CSV to a parquet file.\n"
 "\n"
 "  -help\n"
 "  Display this guide.\n"
@@ -62,15 +62,24 @@ def main():
             if (check_data_validity(input_file)  is False):
                 print ("Please make sure the columns had comma as separator.")
                 sys.exit(1)
-        if (re.search(regex1, param1) != None):
-            conversion_mode = re.findall(regex1, param1)[0]
-        elif (re.search(regex2, param1) != None):
-            write_mode = re.findall(regex2, param1)[0]
-        if (re.search(regex1, param2) != None):
-            conversion_mode = re.findall(regex1, param2)[0]
-        elif (re.search(regex2, param2) != None):
-            write_mode = re.findall(regex2, param2)[0]
-        convert_to_csv(input_file, output_file, conversion_mode, write_mode)
+        
+        if param1 == '-parquet':
+            if param2 == '':
+                print ("Please provide the database type of the CSV file.")
+                sys.exit(1)
+            print(f'Converting {input_file} to {output_file} now...')
+            csv_to_parquet(input_file, output_file, param2)
+            print(f'Conversion done.')
+        else:
+            if (re.search(regex1, param1) != None):
+                conversion_mode = re.findall(regex1, param1)[0]
+            elif (re.search(regex2, param1) != None):
+                write_mode = re.findall(regex2, param1)[0]
+            if (re.search(regex1, param2) != None):
+                conversion_mode = re.findall(regex1, param2)[0]
+            elif (re.search(regex2, param2) != None):
+                write_mode = re.findall(regex2, param2)[0]
+            convert_to_csv(input_file, output_file, conversion_mode, write_mode)
 
     elif ((len(sys.argv) == 2) and (re.search(regex3, sys.argv[1]) != None)):
         print_usage()

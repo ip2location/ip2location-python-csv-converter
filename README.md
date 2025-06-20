@@ -47,6 +47,7 @@ ip2location-csv-converter [-range | -cidr | -hex] [-replace | -append] INPUT_FIL
 | -hex      | IP numbers will be converted into hexadecimal format. (auto padding)        |
 | -hex4     | IP numbers will be converted into hexadecimal format. (pad IPv4)        |
 | -hex6     | IP numbers will be converted into hexadecimal format. (pad IPv6)        |
+| -parquet  | Convert IP2Location/IP2Proxy CSV file to a custom parquet file. |
 | -replace  | The IP numbers in will be replaced to the selected format.   |
 | -append   | The converted format will be appended after the IP numbers field. |
 
@@ -213,6 +214,47 @@ Output:
 ## Custom Input File
 
 You can use this converter for a custom input file provided the input is in CSV format, with the first and second field contain the **ip from** and **ip to** information in numeric format.
+
+## Parquet conversion
+
+You can convert any IP2Location or IP2Proxy CSV file to a parquet file using this converter. The command will be:
+
+```
+ip2location-csv-converter -parquet <database_type> <input_csv_filename> <output_parquet_filename>
+```
+
+You can get the database type of the IP2Location or IP2Proxy CSV file from the below link:
+- [https://www.ip2location.com/database/ip2location](https://www.ip2location.com/database/ip2location): Between DB1 to DB26.
+- [https://www.ip2location.com/database/ip2proxy](https://www.ip2location.com/database/ip2proxy): Between PX1 to PX12.
+
+For IPv6, due to the current limitation of the Decimal data type in parquet, the converter will encode the IPv6 number to hex string and stored as varchar. Hence, you will need to do some pre-conversion during the query time.
+
+Below is one of the example demonstrate on the per-conversion of an IPv6 address before query:
+
+```python
+import ipaddress
+
+# Example IPv6 address
+ipv6_addr = "2001:db8::1"
+
+# Convert to integer
+ipv6_int = int(ipaddress.IPv6Address(ipv6_addr))
+
+# Convert to zero-padded 32-character lowercase hex string
+ipv6_hex = format(ipv6_int, "032x")
+
+```
+
+To query using the hex IPv6 address, the code can looks like this:
+
+```python
+import duckdb
+
+result = duckdb.query(f"""
+    SELECT * FROM '<ipv6_parquet_filename>'
+    WHERE ipv6_hex = '{ipv6_hex}'
+""").to_df()
+```
 
 ## Support
 
