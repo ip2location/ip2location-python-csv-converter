@@ -35,7 +35,7 @@ makepkg -si
 ## Usage
 
 ```
-ip2location-csv-converter [-range | -cidr | -hex] [-replace | -append] INPUT_FILE OUTPUT_FILE
+ip2location-csv-converter [-range | -cidr | -hex | -parquet] [-replace | -append] [database_type] INPUT_FILE OUTPUT_FILE
 ```
 
 #### Parameters

@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ip2location-python-csv-converter",
-    version="1.3.0",
+    version="1.3.1",
     description="Python script to converts IP2Location CSV database into IP range or CIDR format.",
     long_description_content_type="text/markdown",
     long_description=long_description,
@@ -28,6 +28,9 @@ setuptools.setup(
         'console_scripts': ['ip2location-csv-converter=ip2location_csv_converter.commandline:main'],
     },
     packages=setuptools.find_packages(),
+    install_requires=[
+        "pandas>=1.0.0"
+    ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
