@@ -305,9 +305,13 @@ def csv_to_parquet(input_file, output_file, db_type):
     last_line = get_last_row(csv_file)
     
     df_last = pd.read_csv(StringIO(last_line), header=None)
+    
+    # Check the number of column against the header row
+    if len(column_names) != df_last.shape[1]:
+        print(f"Column numbers not matching, aborting now...")
+        sys.exit(1)
+    
     ip_value = df_last.iloc[0, 0]  # Replace with actual index
-    # print("Is IPv6?", is_ipv6(ip_value))
-    # print(f"{ip_value} is {detect_ip_version_from_number(ip_value)}")
     ip_ver = detect_ip_version_from_number(ip_value)
 
     if column_names != '':

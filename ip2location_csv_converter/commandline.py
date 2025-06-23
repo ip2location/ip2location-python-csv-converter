@@ -55,6 +55,20 @@ def main():
         conversion_mode = 'range'
         write_mode = 'replace'
         
+        if (re.search(regex1, input_file) != None):
+            print (f"Invalid input {input_file} detected for input filename. Please check again.")
+            sys.exit(1)
+        if (re.search(regex2, input_file) != None):
+            print (f"Invalid input {input_file} detected for input filename. Please check again.")
+            sys.exit(1)
+        
+        if (re.search(regex1, output_file) != None):
+            print (f"Invalid input {output_file} detected for input filename. Please check again.")
+            sys.exit(1)
+        if (re.search(regex2, output_file) != None):
+            print (f"Invalid input {output_file} detected for input filename. Please check again.")
+            sys.exit(1)
+        
         if ((os.path.isfile(input_file)) is False):
             print ("File doesn't exist! Please check again.")
             sys.exit(1)
@@ -65,6 +79,9 @@ def main():
         
         if param1 == '-parquet':
             if param2 == '':
+                print ("Please provide the database type of the CSV file.")
+                sys.exit(1)
+            elif (re.search(regex2, param2) != None):
                 print ("Please provide the database type of the CSV file.")
                 sys.exit(1)
             print(f'Converting {input_file} to {output_file} now...')
