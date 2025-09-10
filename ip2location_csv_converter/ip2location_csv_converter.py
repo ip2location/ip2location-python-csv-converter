@@ -276,7 +276,7 @@ def csv_to_parquet(input_file, output_file, db_type):
                 "latitude", "longitude", "zip_code", "time_zone", "isp", "domain", "net_speed",
                 "idd_code", "area_code", "weather_station_code", "weather_station_name",
                 "mcc", "mnc", "mobile_brand", "elevation", "usage_type", "address_type",
-                "category", "district", "asn", "as_name"
+                "category", "district", "asn", "as_name", "as_domain", "as_usagetype", "as_cidr"
                 ],
         'PX1': ['ip_from', 'ip_to', 'country_code', 'country_name'],
         'PX2': ['ip_from', 'ip_to', 'proxy_type', 'country_code', 'country_name'],
