@@ -1,5 +1,5 @@
 import os, re, sys, time
-from ip2location_csv_converter.ip2location_csv_converter import convert_to_csv, check_data_validity, csv_to_parquet
+from ip2location_csv_converter.ip2location_csv_converter import convert_to_csv, check_data_validity, csv_to_parquet, csv_to_sqlite
 
 regex1 = r"^\-(range|cidr|hex)$"
 regex2 = r"^\-(replace|append)$"
@@ -30,6 +30,9 @@ def print_usage():
 "  -parquet\n"
 "  Convert a IP2Location/IP2Proxy CSV to a parquet file.\n"
 "\n"
+"  -sqlite\n"
+"  Convert a IP2Location/IP2Proxy CSV to a SQLite db file.\n"
+"\n"
 "  -help\n"
 "  Display this guide.\n"
     )
@@ -49,6 +52,13 @@ def main():
         elif (len(sys.argv) == 5):
             param1 = sys.argv[1]
             param2 = sys.argv[2]
+            param3 = None
+            input_file = sys.argv[3]
+            output_file = sys.argv[4]
+        elif (len(sys.argv) == 6):
+            param1 = sys.argv[1]
+            param2 = sys.argv[2]
+            param3 = sys.argv[3]
             input_file = sys.argv[3]
             output_file = sys.argv[4]
         
@@ -86,6 +96,23 @@ def main():
                 sys.exit(1)
             print(f'Converting {input_file} to {output_file} now...')
             csv_to_parquet(input_file, output_file, param2)
+            print(f'Conversion done.')        
+        elif param1 == '-sqlite':
+            if param2 == '':
+                print ("Please provide the database type of the CSV file.")
+                sys.exit(1)
+            elif (re.search(regex2, param2) != None):
+                print ("Please provide the database type of the CSV file.")
+                sys.exit(1)
+            if not output_file.endswith(".db"):
+                print ("Please provide a valid filename for the sqlite db file.")
+                sys.exit(1)
+            if param3:
+                table_name = param3
+            else:
+                table_name = None
+            print(f'Converting {input_file} to {output_file} now...')
+            csv_to_sqlite(input_file, output_file, param2, table_name)
             print(f'Conversion done.')
         else:
             if (re.search(regex1, param1) != None):

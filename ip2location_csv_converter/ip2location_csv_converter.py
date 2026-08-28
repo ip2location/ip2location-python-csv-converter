@@ -1,17 +1,41 @@
 import os, sys, re, csv, socket, struct, ipaddress, binascii
 import time
+import sqlite3
 from io import open, StringIO
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 from decimal import Decimal
-
+# import constants
+from .constants import FEATURE_MODULES, DB_LAYOUTS, PX_FEATURE_MODULES, PX_DB_LAYOUTS
 
 conversion_mode = 'range'
 write_mode = 'replace'
 
 chunk_size = 1000
 # chunk_size = 10000
+
+def detect_ip_version(ip_val):
+    if not isinstance(ip_val, int):
+        raise TypeError(f"expected int, got {type(ip_val).__name__}")
+
+    try:
+        ip_obj = ipaddress.ip_address(ip_val)
+    except ValueError as exc:
+        raise ValueError(f"{ip_val} is not a valid IPv4 or IPv6 integer") from exc
+
+    return 4 if isinstance(ip_obj, ipaddress.IPv4Address) else 6
+    '''
+    val_str = str(ip_val).strip()
+    
+    # If the value is a numeric integer string (common in DB/PX range files)
+    if val_str.isdigit():
+        ip_num = int(val_str)
+        # 32-bit max integer for IPv4 is 4,294,967,295
+        return 4 if ip_num <= 4294967295 else 6
+
+    # If the value is standard string notation (e.g., "192.168.1.1" or "2001:db8::1")
+    return ipaddress.ip_address(val_str).version'''
 
 def no2ip(iplong):
     try:
@@ -367,3 +391,90 @@ def csv_to_parquet(input_file, output_file, db_type):
             print(str(e))
             sys.exit(1)
 
+def get_last_csv_row_safe(path, encoding='utf-8', chunk_size=65536):
+    with open(path, 'rb') as f:
+        f.seek(0, 2)
+        file_size = f.tell()
+        data = b''
+        pos = file_size
+        while pos > 0:
+            read_size = min(chunk_size, pos)
+            pos -= read_size
+            f.seek(pos)
+            data = f.read(read_size) + data
+            text = data.decode(encoding, errors='ignore')
+            # crude but cheap check: even number of quotes before the
+            # last newline means we're not sitting inside a quoted field
+            lines = text.splitlines()
+            if len(lines) >= 2:
+                candidate = '\n'.join(lines[-1:])
+                if candidate.count('"') % 2 == 0:
+                    return next(csv.reader([candidate]))
+        # fallback: whole file fit in one chunk
+        return next(csv.reader(io.StringIO(text.splitlines()[-1])))
+
+def get_schema(db_level, db_type):
+    """Assembles column schema dictionary for a target IP2Location DB level."""
+    if db_level not in DB_LAYOUTS:
+        raise ValueError(f"Invalid DB level: DB{db_level}")
+
+    schema = {}
+    if db_type == "DB":
+        for module_name in DB_LAYOUTS[db_level]:
+            schema.update(FEATURE_MODULES[module_name])
+    elif db_type == "PX":
+        for module_name in PX_DB_LAYOUTS[db_level]:
+            schema.update(PX_FEATURE_MODULES[module_name])
+
+    return schema
+
+def csv_to_sqlite(input_file, output_file, db_type, table_name=None):
+    if "DB" in db_type.upper():
+        db_version = int(db_type.replace("DB", ""))
+        columns = get_schema(db_version, "DB")
+    elif "PX" in db_type.upper():
+        db_version = int(db_type.replace("PX", ""))
+        columns = get_schema(db_version, "PX")
+    else:
+        print(f"Invalid input for database type, aborting now...")
+        sys.exit(1)
+    
+    if table_name is None:
+        table_name = db_type
+    
+    conn = sqlite3.connect(output_file)
+    cursor = conn.cursor()
+
+    with open(input_file, 'r', encoding='utf-8') as file:
+        last_row = get_last_csv_row_safe(input_file)
+        
+        # Check if first row is a header line; if so, fetch the second row
+        try:
+            ip_version = detect_ip_version_from_number(int(last_row[0]))
+        except ValueError:
+            print("No valid data rows found, aborting...")
+            sys.exit(1)
+        
+        # if ip_version == 4:
+        if ip_version == "IPv4":
+            columns_str = '"ip_from" INTEGER NOT NULL UNIQUE, "ip_to" INTEGER NOT NULL, '
+        # elif ip_version == 6:
+        elif ip_version == "IPv6":
+            columns_str = '"ip_from" TEXT NOT NULL UNIQUE, "ip_to" TEXT NOT NULL, '
+
+        columns_str = f"{columns_str}" + (", ".join([f'"{header}" {columns[header]}' for header in columns]))
+        columns_str = f'{columns_str}, PRIMARY KEY (ip_to)'
+        
+        # Reset reader back to top so reader includes all rows
+        file.seek(0)
+        # Dynamically create table with TEXT columns matching the CSV headers
+        query = f'CREATE TABLE IF NOT EXISTS {table_name} ({columns_str})'
+        cursor.execute(query)
+
+        # Insert data
+        total_cols = len(columns) + 2
+        placeholders = ", ".join(["?"] * total_cols)
+        cursor.executemany(f'INSERT INTO {table_name} VALUES ({placeholders})', reader)
+
+    conn.commit()
+    conn.close()

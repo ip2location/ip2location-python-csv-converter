@@ -1,6 +1,6 @@
 # IP2Location Python CSV Converter
 
-This Python script converts IP2Location CSV data file, that contains the IP address in numeric notation, into dot-decimal notation (such as x.x.x.x) or CIDR notation (x.x.x.x/24). It supports both the IP2Location commercial edition, DB1 to DB26 database and also the free edition, IP2Location LITE database. In addition to this, this converter can also be used to convert any CSV file that contains the IP number (the numeric notation).
+This Python script converts IP2Location CSV data file, that contains the IP address in numeric notation, into dot-decimal notation (such as x.x.x.x) or CIDR notation (x.x.x.x/24). It supports both the IP2Location commercial edition, DB1 to DB26 database and also the free edition, IP2Location LITE database. This converter also supports the conversion of the CSV file to parquet or SQLite DB file. In addition to this, this converter can also be used to convert any CSV file that contains the IP number (the numeric notation).
 
 You can download the IP2Location CSV file at the below links:
 
@@ -35,7 +35,7 @@ makepkg -si
 ## Usage
 
 ```
-ip2location-csv-converter [-range | -cidr | -hex | -parquet] [-replace | -append] [database_type] INPUT_FILE OUTPUT_FILE
+ip2location-csv-converter [-range | -cidr | -hex | -parquet | -sqlite] [-replace | -append] [database_type] INPUT_FILE OUTPUT_FILE
 ```
 
 #### Parameters
@@ -48,6 +48,7 @@ ip2location-csv-converter [-range | -cidr | -hex | -parquet] [-replace | -append
 | -hex4     | IP numbers will be converted into hexadecimal format. (pad IPv4)        |
 | -hex6     | IP numbers will be converted into hexadecimal format. (pad IPv6)        |
 | -parquet  | Convert IP2Location/IP2Proxy CSV file to a custom parquet file. |
+| -sqlite  | Convert IP2Location/IP2Proxy CSV file to a custom SQLite DB file. |
 | -replace  | The IP numbers in will be replaced to the selected format.   |
 | -append   | The converted format will be appended after the IP numbers field. |
 
@@ -255,6 +256,20 @@ result = duckdb.query(f"""
     WHERE ipv6_hex = '{ipv6_hex}'
 """).to_df()
 ```
+
+## SQLite DB conversion
+
+You can convert any IP2Location or IP2Proxy CSV file to a SQLite DB file using this converter. The command will be:
+
+```
+ip2location-csv-converter -sqlite <database_type> <input_csv_filename> <output_db_filename> <table_name>
+```
+
+Note that the `table_name` is optional and if no supplied, the table will be named as the database type, for example DB1.
+
+You can get the database type of the IP2Location or IP2Proxy CSV file from the below link:
+- [https://www.ip2location.com/database/ip2location](https://www.ip2location.com/database/ip2location): Between DB1 to DB26.
+- [https://www.ip2location.com/database/ip2proxy](https://www.ip2location.com/database/ip2proxy): Between PX1 to PX12.
 
 ## Support
 

@@ -10,3 +10,6 @@ htmlcov/
 docs/_build/
 *.egg-info
 *.parquet
+*.csv
+
+!sample.csv
