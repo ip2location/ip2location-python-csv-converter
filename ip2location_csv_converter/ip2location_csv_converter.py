@@ -326,16 +326,15 @@ def csv_to_parquet(input_file, output_file, db_type):
     
     # Determine ipv4 or ipv6 based on the last row of the file
     # Get last line
-    last_line = get_last_row(csv_file)
-    
-    df_last = pd.read_csv(StringIO(last_line), header=None)
+    last_row = get_last_csv_row_safe(csv_file)
     
     # Check the number of column against the header row
-    if len(column_names) != df_last.shape[1]:
+    # (an empty file returns [] and ends up here too)
+    if len(column_names) != len(last_row):
         print(f"Column numbers not matching, aborting now...")
         sys.exit(1)
     
-    ip_value = df_last.iloc[0, 0]  # Replace with actual index
+    ip_value = last_row[0]
     ip_ver = detect_ip_version_from_number(ip_value)
 
     if column_names != '':
@@ -395,6 +394,8 @@ def get_last_csv_row_safe(path, encoding='utf-8', chunk_size=65536):
     with open(path, 'rb') as f:
         f.seek(0, 2)
         file_size = f.tell()
+        if file_size == 0:
+            return []
         data = b''
         pos = file_size
         while pos > 0:
@@ -411,7 +412,10 @@ def get_last_csv_row_safe(path, encoding='utf-8', chunk_size=65536):
                 if candidate.count('"') % 2 == 0:
                     return next(csv.reader([candidate]))
         # fallback: whole file fit in one chunk
-        return next(csv.reader(io.StringIO(text.splitlines()[-1])))
+        lines = text.splitlines()
+        if not lines:
+            return []
+        return next(csv.reader(StringIO(lines[-1])))
 
 def get_schema(db_level, db_type):
     """Assembles column schema dictionary for a target IP2Location DB level."""
